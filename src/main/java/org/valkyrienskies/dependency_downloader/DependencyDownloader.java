@@ -1,7 +1,5 @@
 package org.valkyrienskies.dependency_downloader;
 
-import org.valkyrienskies.dependency_downloader.matchers.StandardMatchers;
-
 import javax.swing.*;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -13,22 +11,7 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Stream;
 
-import static org.valkyrienskies.dependency_downloader.matchers.StandardMatchers.Fabric16.*;
-
 public class DependencyDownloader {
-
-    public static void main(String[] args) {
-        new DependencyDownloader(Paths.get("./mods"),
-            Arrays.asList(
-                VALKYRIEN_SKIES,
-                CLOTH_CONFIG,
-                FABRIC_API,
-                FABRIC_KOTLIN,
-                ARCHITECTURY_API,
-                MOD_MENU
-            ))
-            .promptToDownload();
-    }
 
     private final Path modPath;
     private final Set<ModDependency> unsatisfiedDependencies;

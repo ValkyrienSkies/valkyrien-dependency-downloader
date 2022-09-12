@@ -1,2 +1,2 @@
-rootProject.name = "ValkyrienDependencyDownloader"
+rootProject.name = "valkyrien-dependency-downloader"
 
