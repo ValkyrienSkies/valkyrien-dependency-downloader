@@ -2,7 +2,6 @@ package org.valkyrienskies.dependency_downloader;
 
 
 import java.nio.file.Path;
-import java.util.Comparator;
 import java.util.Optional;
 
 public class DependencyToDownload implements Comparable<DependencyToDownload> {
@@ -26,11 +25,11 @@ public class DependencyToDownload implements Comparable<DependencyToDownload> {
     @Override
     public int compareTo(DependencyToDownload that) {
         if (this.dependency.isOptional() && !that.dependency.isOptional()) {
-            return 1;
+            return -1;
         }
 
         if (that.dependency.isOptional() && !this.dependency.isOptional()) {
-            return -1;
+            return 1;
         }
 
         return this.dependency.getName().compareToIgnoreCase(that.dependency.getName());

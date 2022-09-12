@@ -32,7 +32,7 @@ public class DependencyDownloader {
 
     private final Path modPath;
     private final Set<ModDependency> unsatisfiedDependencies;
-    private final Set<DependencyToDownload> toDownload = new HashSet<>();
+    private final Set<DependencyToDownload> toDownload = new TreeSet<>();
 
     public DependencyDownloader(Path modPath, List<ModDependency> dependencies) {
         this.modPath = modPath;
