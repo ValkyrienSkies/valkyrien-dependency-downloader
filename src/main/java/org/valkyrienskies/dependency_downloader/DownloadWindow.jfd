@@ -1,0 +1,99 @@
+JFDML JFormDesigner: "8.0.0.0.163" Java: "17.0.3" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+			name: "this"
+			"defaultCloseOperation": 0
+			"$sizePolicy": 1
+			addEvent( new FormEvent( "java.awt.event.WindowListener", "windowClosing", "thisWindowClosing", true ) )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+				"$columnSpecs": "187:1.0, 187:1.0"
+				"$rowSpecs": "0, center:0:1.0, 50, 0"
+				"$vGap": 10
+				"$hGap": 10
+			} ) {
+				name: "panel1"
+				"border": new javax.swing.border.EmptyBorder( 15, 15, 15, 15 )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "label1"
+					"text": "<html>You are missing required dependencies. Please select the dependencies you would like to automatically download:</html>"
+					"font": new java.awt.Font( "Segoe UI", 0, 12 )
+					"preferredSize": new java.awt.Dimension( 300, 32 )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"hAlign": 5
+					"gridwidth": 2
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class javax.swing.BoxLayout ) {
+					"axis": 1
+				} ) {
+					name: "panel2"
+					"border": new javax.swing.border.TitledBorder( null, "Select Dependencies", 4, 0, new java.awt.Font( "Segoe UI", 0, 12 ), null )
+					"font": new com.jformdesigner.model.SwingDerivedFont( "Segoe UI", 65536, 0, false )
+					auxiliary() {
+						"JavaCodeGenerator.variableName": "selectDependencies"
+					}
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 1
+					"hAlign": 5
+					"vAlign": 1
+					"gridwidth": 2
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "downloadButton"
+					"text": "Download"
+					"background": new java.awt.Color( 54, 159, 214, 255 )
+					"foreground": sfield java.awt.Color white
+					"font": new java.awt.Font( "Segoe UI Black", 0, 20 )
+					auxiliary() {
+						"JavaCodeGenerator.variableName": "download"
+						"JavaCodeGenerator.variableModifiers": 1
+					}
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "onDownload", true ) )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 2
+					"gridwidth": 2
+				} )
+				add( new FormComponent( "javax.swing.JProgressBar" ) {
+					name: "downloadProgress"
+					"visible": false
+					"stringPainted": true
+					auxiliary() {
+						"JavaCodeGenerator.variableModifiers": 1
+					}
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 2
+					"gridwidth": 2
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "button5"
+					"text": "<html>Cancel & Continue</html>"
+					"font": &Font0 new java.awt.Font( "Segoe UI", 0, 12 )
+					"background": &Color0 new java.awt.Color( 255, 255, 255, 255 )
+					auxiliary() {
+						"JavaCodeGenerator.variableName": "cancel"
+					}
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cancel", true ) )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridy": 3
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "button1"
+					"text": "<html>Cancel & Close Game</html>"
+					"font": #Font0
+					"background": #Color0
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cancelAndExit", true ) )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+					"gridx": 1
+					"gridy": 3
+				} )
+			}, new FormLayoutConstraints( class java.lang.String ) {
+				"value": "Center"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 475, 285 )
+		} )
+	}
+}
