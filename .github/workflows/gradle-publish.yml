@@ -40,13 +40,11 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - name: Build mod jar
-        run: ./gradlew build
 
       # The USERNAME and TOKEN need to correspond to the credentials' environment variables used in
       # the publishing section of your build.gradle
       - name: Publish to GitHub Packages and VS Maven
-        run: ./gradlew publish
+        run: chmod +x gradlew && ./gradlew publish
         env:
           USERNAME: ${{ github.actor }}
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
