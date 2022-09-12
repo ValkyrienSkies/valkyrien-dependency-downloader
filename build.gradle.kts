@@ -39,7 +39,7 @@ publishing {
             println("Publishing to GitHub Packages")
             maven {
                 name = "GithubPackages"
-                url = uri("https://maven.pkg.github.com/ValkyrienSkies/vs-core")
+                url = uri("https://maven.pkg.github.com/ValkyrienSkies/valkyrien-dependency-downloader")
                 credentials {
                     username = ghpUser
                     password = ghpPassword
