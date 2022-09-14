@@ -14,16 +14,20 @@ import java.util.stream.Stream;
 public class DependencyDownloader {
 
     private final Path modPath;
+    private final Path skipMarkerPath;
     private final Set<ModDependency> unsatisfiedDependencies;
     private final Set<DependencyToDownload> toDownload = new TreeSet<>();
 
     public DependencyDownloader(Path modPath, List<ModDependency> dependencies) {
         this.modPath = modPath;
+        this.skipMarkerPath = modPath.resolve("valkryien_do_not_check_updates");
         this.unsatisfiedDependencies = new HashSet<>(dependencies);
     }
 
 
     public void promptToDownload() {
+        if (Files.exists(skipMarkerPath)) return;
+
         checkAllJars();
         generateUnsatisfiedDependencies();
         if (!toDownload.isEmpty()) {
@@ -54,13 +58,21 @@ public class DependencyDownloader {
             System.exit(0);
         }
 
+        if (window.doNotAskCheckbox.isSelected()) {
+            try {
+                Files.createFile(skipMarkerPath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         window.dispose();
     }
 
     private void downloadDependencies(Collection<DependencyToDownload> toDownload) {
         int downloaded = 0;
         window.downloadProgress.setVisible(true);
-        window.download.setVisible(false);
+        window.downloadButton.setVisible(false);
         window.downloadProgress.setMaximum(toDownload.size());
         for (DependencyToDownload dep : toDownload) {
             downloadDependency(dep);
