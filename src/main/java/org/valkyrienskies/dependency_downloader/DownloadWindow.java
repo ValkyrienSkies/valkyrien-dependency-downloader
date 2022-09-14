@@ -30,6 +30,7 @@ public class DownloadWindow extends JFrame {
     public DownloadWindow(Iterable<DependencyToDownload> deps) {
         initComponents();
         createCheckboxes(deps);
+        this.setIconImage(Toolkit.getDefaultToolkit().createImage(getClass().getResource("valkyrien_icon.png")));
         pack();
     }
 
@@ -125,6 +126,7 @@ public class DownloadWindow extends JFrame {
 
         //======== this ========
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        setTitle("Valkyrien Dependency Downloader");
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
