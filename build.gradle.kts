@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "org.valkyrienskies"
-version = "1.3"
+version = "2.0"
 
 repositories {
     mavenCentral()
@@ -29,6 +29,7 @@ dependencies {
 
     implementation("com.google.code.findbugs:jsr305:3.0.2")
     implementation("com.google.code.gson:gson:2.8.0") // Minecraft has GSON already
+    implementation("com.electronwill.night-config:toml:3.6.0") // included in Forge
 }
 
 publishing {

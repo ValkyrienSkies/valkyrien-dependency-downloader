@@ -1,6 +1,5 @@
 package org.valkyrienskies.dependency_downloader.matchers;
 
-import com.github.zafarkhaja.semver.Version;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.valkyrienskies.dependency_downloader.DependencyMatchResult;
@@ -8,16 +7,13 @@ import org.valkyrienskies.dependency_downloader.DependencyMatcher;
 
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
-import java.util.Objects;
 
 public class FabricDependencyMatcher implements DependencyMatcher {
 
-    private final String modId;
-    private final String versionRange;
+    private final ModSpecification specification;
 
-    public FabricDependencyMatcher(String modId, String versionRange) {
-        this.modId = modId;
-        this.versionRange = versionRange;
+    public FabricDependencyMatcher(ModSpecification specification) {
+        this.specification = specification;
     }
 
     @Override
@@ -27,8 +23,8 @@ public class FabricDependencyMatcher implements DependencyMatcher {
             JsonObject obj = new JsonParser().parse(fabricJson).getAsJsonObject();
             String id = obj.get("id").getAsString();
             String version = obj.get("version").getAsString();
-            if (Objects.equals(modId, id)) {
-                if (Version.valueOf(version).satisfies(versionRange)) {
+            if (specification.isCorrectMod(id)) {
+                if (specification.isCorrectVersion(version)) {
                     return DependencyMatchResult.FULFILLED;
                 } else {
                     return DependencyMatchResult.REPLACE;
