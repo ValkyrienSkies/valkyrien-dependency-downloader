@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "org.valkyrienskies"
-version = "1.2"
+version = "1.3"
 
 repositories {
     mavenCentral()
@@ -27,6 +27,7 @@ repositories {
 dependencies {
     implementation("com.github.zafarkhaja:java-semver:0.9.0")
 
+    implementation("com.google.code.findbugs:jsr305:3.0.2")
     implementation("com.google.code.gson:gson:2.8.0") // Minecraft has GSON already
 }
 
