@@ -16,9 +16,12 @@ new FormModel {
 				name: "panel1"
 				"border": new javax.swing.border.EmptyBorder( 10, 10, 10, 10 )
 				add( new FormComponent( "javax.swing.JLabel" ) {
-					name: "label1"
+					name: "currentlyDownloading"
 					"text": "Currently downloading: "
 					"font": new java.awt.Font( "SansSerif", 0, 12 )
+					auxiliary() {
+						"JavaCodeGenerator.variableModifiers": 1
+					}
 				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 					"gridwidth": 2
 				} )

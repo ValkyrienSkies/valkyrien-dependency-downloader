@@ -19,14 +19,14 @@ public class DownloadingProgress extends JFrame {
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         panel1 = new JPanel();
-        label1 = new JLabel();
+        currentlyDownloading = new JLabel();
         panel2 = new JPanel();
         totalProgress = new JProgressBar();
         label2 = new JLabel();
         cancelButton = new JButton();
 
         //======== this ========
-        Container contentPane = getContentPane();
+        var contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
 
         //======== panel1 ========
@@ -38,10 +38,10 @@ public class DownloadingProgress extends JFrame {
             ((GridBagLayout)panel1.getLayout()).columnWeights = new double[] {1.0, 0.0, 1.0E-4};
             ((GridBagLayout)panel1.getLayout()).rowWeights = new double[] {0.0, 1.0, 0.0, 0.0, 1.0E-4};
 
-            //---- label1 ----
-            label1.setText("Currently downloading: ");
-            label1.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
-            panel1.add(label1, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0,
+            //---- currentlyDownloading ----
+            currentlyDownloading.setText("Currently downloading: ");
+            currentlyDownloading.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
+            panel1.add(currentlyDownloading, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0,
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                 new Insets(0, 0, 5, 0), 0, 0));
 
@@ -88,7 +88,7 @@ public class DownloadingProgress extends JFrame {
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     private JPanel panel1;
-    private JLabel label1;
+    public JLabel currentlyDownloading;
     private JPanel panel2;
     public JProgressBar totalProgress;
     private JLabel label2;

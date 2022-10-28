@@ -23,6 +23,7 @@ public class StandardMatchers {
         System.out.println();
         System.out.println(fabricValkyrienSkiesDependency(">=2.0.0", "2.0.0+2f3d531230").asJson());
         System.out.println(Fabric16.ARCHITECTURY_API.asJson());
+        System.out.println(Fabric16.FABRIC_API.asJson());
     }
 
     public static ModDependency fabricValkyrienSkiesDependency(String versionRange, String latestVersion) {

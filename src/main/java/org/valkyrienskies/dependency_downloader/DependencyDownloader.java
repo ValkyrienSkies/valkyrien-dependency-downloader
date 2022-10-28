@@ -38,6 +38,7 @@ public class DependencyDownloader {
 
         window.totalProgress.setMaximum(data.toDownload.size());
         for (DependencyToDownload dep : data.toDownload) {
+            window.currentlyDownloading.setText("Currently downloading: " + dep.getName());
             downloadDependency(dep);
             window.totalProgress.setValue(++downloaded);
         }
