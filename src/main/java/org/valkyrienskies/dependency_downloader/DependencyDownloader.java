@@ -44,16 +44,16 @@ public class DependencyDownloader {
 
         double time = (System.nanoTime() - startTime) / 1e9;
 
-        if (data.restartCommand != null) {
-            try {
-                String[] envp = data.restartEnv.entrySet().stream()
-                    .map(e -> e.getKey() + "=" + e.getValue())
-                    .toArray(String[]::new);
-                Runtime.getRuntime().exec(data.restartCommand, envp);
-                JOptionPane.showMessageDialog(window, String.format("Download finished in %.1f seconds. We are restarting the game for you.", time));
-                return;
-            } catch (IOException ignored) {}
-        }
+//        if (data.restartCommand != null) {
+//            try {
+//                String[] envp = data.restartEnv.entrySet().stream()
+//                    .map(e -> e.getKey() + "=" + e.getValue())
+//                    .toArray(String[]::new);
+//                Runtime.getRuntime().exec(data.restartCommand, envp);
+//                JOptionPane.showMessageDialog(window, String.format("Download finished in %.1f seconds. We are restarting the game for you.", time));
+//                return;
+//            } catch (IOException ignored) {}
+//        }
 
         JOptionPane.showMessageDialog(window, String.format("Download finished in %.1f seconds. Please manually restart the game.", time));
     }
