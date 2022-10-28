@@ -44,10 +44,6 @@ tasks.named<ShadowJar>("shadowJar") {
     minimize()
 }
 
-tasks.compileJava {
-    options.release.set(8)
-}
-
 publishing {
     repositories {
         val ghpUser = (project.findProperty("gpr.user") ?: System.getenv("USERNAME")) as String?
