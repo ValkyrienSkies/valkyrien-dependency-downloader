@@ -1,93 +1,68 @@
 package org.valkyrienskies.dependency_downloader;
 
+import org.valkyrienskies.dependency_downloader.gui.DownloadingProgress;
+
 import javax.swing.*;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.*;
-import java.util.*;
-import java.util.stream.Stream;
+import java.util.Collection;
 
 public class DependencyDownloader {
+    private final DownloadData data;
+    private DownloadingProgress window;
 
-    private final Path modPath;
-    private final Path skipMarkerPath;
-    private final Set<ModDependency> unsatisfiedDependencies;
-    private final Set<DependencyToDownload> toDownload = new TreeSet<>();
-
-    public DependencyDownloader(Path modPath, List<ModDependency> dependencies) {
-        this.modPath = modPath;
-        this.skipMarkerPath = modPath.resolve("valkryien_do_not_check_updates");
-        this.unsatisfiedDependencies = new HashSet<>(dependencies);
+    public DependencyDownloader(DownloadData data) {
+        this.data = data;
     }
 
 
-    public void promptToDownload() {
-        if (Files.exists(skipMarkerPath)) return;
-
-        checkAllJars();
-        generateUnsatisfiedDependencies();
-        if (!toDownload.isEmpty()) {
-            createDownloadWindow();
-        }
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
+        DownloadData data = (DownloadData) new ObjectInputStream(System.in).readObject();
+        new DependencyDownloader(data).start();
     }
 
-    private DownloadWindow window;
+    private void start() {
+        window = new DownloadingProgress();
 
-    private void createDownloadWindow() {
-        window = new DownloadWindow(toDownload);
-        window.setVisible(true);
-        synchronized (window.lock) {
-            while (!window.shouldContinue) {
-                try {
-                    window.lock.wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-
-        if (window.shouldDownload) {
-            long startTime = System.nanoTime();
-            downloadDependencies(window.getSelected());
-            double time = (System.nanoTime() - startTime) / 1e9;
-            JOptionPane.showMessageDialog(window, String.format("Download finished in %.1f seconds. You may have to manually restart the game.", time));
-            System.exit(0);
-        }
-
-        if (window.doNotAskCheckbox.isSelected()) {
-            try {
-                Files.createFile(skipMarkerPath);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        window.dispose();
-    }
-
-    private void downloadDependencies(Collection<DependencyToDownload> toDownload) {
         int downloaded = 0;
-        window.downloadProgress.setVisible(true);
-        window.downloadButton.setVisible(false);
-        window.downloadProgress.setMaximum(toDownload.size());
-        for (DependencyToDownload dep : toDownload) {
+        long startTime = System.nanoTime();
+
+        window.totalProgress.setMaximum(data.toDownload.size());
+        for (DependencyToDownload dep : data.toDownload) {
             downloadDependency(dep);
-            window.downloadProgress.setValue(++downloaded);
+            window.totalProgress.setValue(++downloaded);
         }
+
+        double time = (System.nanoTime() - startTime) / 1e9;
+
+        if (data.restartCommand != null) {
+            try {
+                new ProcessBuilder(data.restartCommand.split(" ")).directory(null).start();
+                JOptionPane.showMessageDialog(window, String.format("Download finished in %.1f seconds. We are restarting the game for you.", time));
+                return;
+            } catch (IOException ignored) {}
+        }
+
+        JOptionPane.showMessageDialog(window, String.format("Download finished in %.1f seconds. Please manually restart the game.", time));
     }
 
     private void downloadDependency(DependencyToDownload toDownload) {
         try {
-            ModDependency dep = toDownload.getDependency();
-            HttpURLConnection conn = (HttpURLConnection) new URL(dep.getDownloadUrl()).openConnection();
+            HttpURLConnection conn = (HttpURLConnection) new URL(toDownload.getDownloadUrl()).openConnection();
             conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
             ReadableByteChannel urlChannel = Channels.newChannel(conn.getInputStream());
 
-            toDownload.getToReplace().ifPresent(p -> {
+            Path modPath = Paths.get(data.modPath);
+
+            toDownload.getToReplace().ifPresent(pathStr -> {
+                Path p = Paths.get(pathStr);
                 try {
                     Path backupPath = modPath.resolve("vs_old_dependencies");
                     Files.createDirectories(backupPath);
@@ -96,47 +71,28 @@ public class DependencyDownloader {
                     throw new RuntimeException(e);
                 }
             });
-            Path targetPath = modPath.resolve(dep.getDownloadUrl().substring(dep.getDownloadUrl().lastIndexOf('/') + 1));
+
+            Path targetPath = modPath.resolve(toDownload.getFileName());
             try (FileChannel targetChannel = FileChannel.open(targetPath, StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
                 targetChannel.transferFrom(urlChannel, 0, Long.MAX_VALUE);
             }
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(window, "Failed to download " + toDownload.getDependency().getName() + ": " + e.getMessage());
+            JOptionPane.showMessageDialog(window, "Failed to download " + toDownload.getName() + ": " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    private void generateUnsatisfiedDependencies() {
-        for (ModDependency dependency : unsatisfiedDependencies) {
-            toDownload.add(new DependencyToDownload(dependency, null));
+    public static class DownloadData implements Serializable {
+
+        final String modPath;
+        final Collection<DependencyToDownload> toDownload;
+        final String restartCommand;
+
+        public DownloadData(String modPath, Collection<DependencyToDownload> toDownload, String restartCommand) {
+            this.modPath = modPath;
+            this.toDownload = toDownload;
+            this.restartCommand = restartCommand;
         }
     }
 
-    private void checkAllJars() {
-        try (Stream<Path> jars = Files.list(modPath)) {
-            jars.filter(jar -> jar.getFileName().toString().endsWith(".jar"))
-                .forEach(this::checkJar);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void checkJar(Path jar) {
-        try (FileSystem zipfs = FileSystems.newFileSystem(jar, null)) {
-            unsatisfiedDependencies.removeIf(dep -> {
-                DependencyMatchResult match = dep.getMatcher().matches(zipfs);
-                checkMatchResult(jar, dep, match);
-                return match != DependencyMatchResult.PASS;
-            });
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void checkMatchResult(Path jar, ModDependency dependency, DependencyMatchResult match) {
-        if (match == DependencyMatchResult.REPLACE) {
-            toDownload.add(new DependencyToDownload(dependency, jar));
-        }
-    }
 }

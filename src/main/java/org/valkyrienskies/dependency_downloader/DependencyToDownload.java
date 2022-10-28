@@ -1,37 +1,55 @@
 package org.valkyrienskies.dependency_downloader;
 
 
+import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.Optional;
 
-public class DependencyToDownload implements Comparable<DependencyToDownload> {
+public class DependencyToDownload implements Comparable<DependencyToDownload>, Serializable {
 
-    private final ModDependency dependency;
-    private final Path toReplace;
+    private final String downloadUrl;
+    private final boolean optional;
+    private final String name;
+    private final String toReplace;
 
-    public DependencyToDownload(ModDependency dependency, Path toReplace) {
-        this.dependency = dependency;
+    public DependencyToDownload(ModDependency dependency, String toReplace) {
+        this.downloadUrl = dependency.getDownloadUrl();
+        this.optional = dependency.isOptional();
+        this.name = dependency.getName();
         this.toReplace = toReplace;
     }
 
-    public Optional<Path> getToReplace() {
+    public String getDownloadUrl() {
+        return downloadUrl;
+    }
+
+    public boolean isOptional() {
+        return optional;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getFileName() {
+        return getDownloadUrl().substring(getDownloadUrl().lastIndexOf('/') + 1);
+    }
+
+    public Optional<String> getToReplace() {
         return Optional.ofNullable(toReplace);
     }
 
-    public ModDependency getDependency() {
-        return dependency;
-    }
 
     @Override
     public int compareTo(DependencyToDownload that) {
-        if (this.dependency.isOptional() && !that.dependency.isOptional()) {
+        if (this.isOptional() && !that.isOptional()) {
             return -1;
         }
 
-        if (that.dependency.isOptional() && !this.dependency.isOptional()) {
+        if (that.isOptional() && !this.isOptional()) {
             return 1;
         }
 
-        return this.dependency.getName().compareToIgnoreCase(that.dependency.getName());
+        return this.getName().compareToIgnoreCase(that.getName());
     }
 }

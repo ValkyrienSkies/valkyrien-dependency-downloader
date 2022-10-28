@@ -2,8 +2,6 @@ package org.valkyrienskies.dependency_downloader.matchers;
 
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import com.electronwill.nightconfig.core.file.FileConfig;
-import org.valkyrienskies.dependency_downloader.DependencyMatchResult;
-import org.valkyrienskies.dependency_downloader.DependencyMatcher;
 
 import java.nio.file.FileSystem;
 import java.nio.file.Path;

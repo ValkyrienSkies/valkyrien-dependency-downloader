@@ -1,7 +1,5 @@
 package org.valkyrienskies.dependency_downloader.matchers;
 
-import org.valkyrienskies.dependency_downloader.DependencyMatcher;
-
 @FunctionalInterface
 public interface DependencyMatcherFactory {
 

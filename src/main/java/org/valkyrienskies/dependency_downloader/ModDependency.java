@@ -1,5 +1,7 @@
 package org.valkyrienskies.dependency_downloader;
 
+import org.valkyrienskies.dependency_downloader.matchers.DependencyMatcher;
+
 import java.util.Objects;
 
 public class ModDependency {

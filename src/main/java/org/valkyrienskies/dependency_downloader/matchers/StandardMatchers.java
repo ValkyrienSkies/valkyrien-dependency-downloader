@@ -8,6 +8,11 @@ public class StandardMatchers {
 
     public static final String MAVEN_URL = "https://maven.valkyrienskies.org";
 
+    public static void main(String[] args) {
+        System.out.println(Forge16.ARCHITECTURY_API.getDownloadUrl());
+        System.out.println(curseDownloadUrl("(modId)", "(projectId)", "(fileId)"));
+    }
+
     public static ModDependency fabricValkyrienSkiesDependency(String versionRange, String latestVersion) {
         return mavenDependency(
             "Valkyrien Skies",

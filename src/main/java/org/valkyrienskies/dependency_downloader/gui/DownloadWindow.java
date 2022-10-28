@@ -1,4 +1,6 @@
-package org.valkyrienskies.dependency_downloader;
+package org.valkyrienskies.dependency_downloader.gui;
+
+import org.valkyrienskies.dependency_downloader.DependencyToDownload;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -7,6 +9,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,7 +33,10 @@ public class DownloadWindow extends JFrame {
     public DownloadWindow(Iterable<DependencyToDownload> deps) {
         initComponents();
         createCheckboxes(deps);
-        this.setIconImage(Toolkit.getDefaultToolkit().createImage(getClass().getResource("valkyrien_icon.png")));
+        URL icon = getClass().getResource("valkyrien_icon.png");
+        if (icon != null) {
+            this.setIconImage(Toolkit.getDefaultToolkit().createImage(icon));
+        }
         pack();
     }
 
@@ -39,10 +45,10 @@ public class DownloadWindow extends JFrame {
 
         private DependencyCheckbox(DependencyToDownload toDownload) {
             this.toDownload = toDownload;
-            boolean isOptional = toDownload.getDependency().isOptional();
-            setText(toDownload.getDependency().getName() + (isOptional ? " (optional)" : ""));
+            boolean isOptional = toDownload.isOptional();
+            setText(toDownload.getName() + (isOptional ? " (optional)" : ""));
             setSelected(true);
-            setFont(new Font("Segoe UI", Font.PLAIN, 12));
+            setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
         }
 
         public DependencyToDownload getToDownload() {

@@ -1,4 +1,4 @@
-package org.valkyrienskies.dependency_downloader;
+package org.valkyrienskies.dependency_downloader.matchers;
 
 public enum DependencyMatchResult {
 

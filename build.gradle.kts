@@ -1,10 +1,13 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     `java-library`
     `maven-publish`
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 group = "org.valkyrienskies"
-version = "2.0"
+version = "3.0"
 
 repositories {
     mavenCentral()
@@ -24,12 +27,25 @@ repositories {
     }
 }
 
+val shade by configurations.creating
+configurations.implementation.get().extendsFrom(shade)
+
 dependencies {
-    implementation("com.github.zafarkhaja:java-semver:0.9.0")
+    shade("com.github.zafarkhaja:java-semver:0.9.0")
 
     implementation("com.google.code.findbugs:jsr305:3.0.2")
     implementation("com.google.code.gson:gson:2.8.0") // Minecraft has GSON already
     implementation("com.electronwill.night-config:toml:3.6.0") // included in Forge
+    implementation("org.apache.commons:commons-lang3:3.7") // included in Minecraft
+}
+
+tasks.named<ShadowJar>("shadowJar") {
+    configurations = listOf(shade)
+    minimize()
+}
+
+tasks.compileJava {
+    options.release.set(8)
 }
 
 publishing {
@@ -38,7 +54,7 @@ publishing {
         val ghpPassword = (project.findProperty("gpr.key") ?: System.getenv("TOKEN")) as String?
         // Publish to Github Packages
         if (ghpUser != null && ghpPassword != null) {
-            println("Publishing to GitHub Packages")
+            println("Publishing to GitHub Packages ($version)")
             maven {
                 name = "GithubPackages"
                 url = uri("https://maven.pkg.github.com/ValkyrienSkies/valkyrien-dependency-downloader")
@@ -53,7 +69,7 @@ publishing {
         val vsMavenPassword = project.findProperty("vs_maven_password") as String?
         val vsMavenUrl = project.findProperty("vs_maven_url") as String?
         if (vsMavenUrl != null && vsMavenPassword != null && vsMavenUsername != null) {
-            println("Publishing to VS Maven")
+            println("Publishing to VS Maven ($version)")
             maven {
                 url = uri(vsMavenUrl)
                 credentials {

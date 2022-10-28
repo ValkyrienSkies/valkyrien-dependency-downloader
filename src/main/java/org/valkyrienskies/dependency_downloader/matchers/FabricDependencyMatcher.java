@@ -2,8 +2,6 @@ package org.valkyrienskies.dependency_downloader.matchers;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.valkyrienskies.dependency_downloader.DependencyMatchResult;
-import org.valkyrienskies.dependency_downloader.DependencyMatcher;
 
 import java.nio.file.FileSystem;
 import java.nio.file.Files;

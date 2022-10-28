@@ -1,0 +1,18 @@
+[
+  {
+    "loader": "fabric",
+    "name": "(modId)",
+    "downloadUrl": "https://maven.valkyrienskies.org/curse/maven/(modId)-(projectId)/(fileId)/(modId)-(projectId)-(fileId).jar",
+    "modId": "(modId)",
+    "versionRange": ">=1.0",
+    "optional": true
+  },
+  {
+    "loader": "fabric",
+    "name": "architectury",
+    "downloadUrl": "https://maven.valkyrienskies.org/curse/maven/architectury-419699/3857643/architectury-419699-3857643.jar",
+    "modId": "architectury",
+    "versionRange": ">=1.32.66",
+    "optional": false
+  }
+]
