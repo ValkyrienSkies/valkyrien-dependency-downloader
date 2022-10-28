@@ -31,6 +31,7 @@ public class DependencyDownloader {
 
     private void start() {
         window = new DownloadingProgress();
+        window.setVisible(true);
 
         int downloaded = 0;
         long startTime = System.nanoTime();

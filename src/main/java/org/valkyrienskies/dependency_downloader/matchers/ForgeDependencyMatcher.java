@@ -33,6 +33,8 @@ public class ForgeDependencyMatcher implements DependencyMatcher {
                     }
                 }
             }
+        } catch (Exception e) {
+            return DependencyMatchResult.PASS;
         }
 
         return DependencyMatchResult.PASS;

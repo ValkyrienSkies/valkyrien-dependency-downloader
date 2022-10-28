@@ -1,6 +1,7 @@
 package org.valkyrienskies.dependency_downloader;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
@@ -8,6 +9,10 @@ import java.util.stream.Collectors;
 
 public class ValkyrienDependencyDownloader {
     public static final AtomicBoolean hasAlreadyRun = new AtomicBoolean(false);
+
+    public static void main(String[] args) {
+        start(Paths.get("mods"), true);
+    }
 
     public static void start(Path modPath, boolean isDedicatedServer) {
         start(modPath, x -> true, null, isDedicatedServer);
@@ -27,12 +32,13 @@ public class ValkyrienDependencyDownloader {
         List<ModDependency> requirements = DependencyAnalyzer.scanRequirements(modPath)
             .stream().filter(shouldLoad).collect(Collectors.toList());
 
-        if (isDedicatedServer) {
+        if (isDedicatedServer && !requirements.stream().allMatch(ModDependency::isOptional)) {
             String reqsStr = requirements.stream()
                 .map(d -> d.getName() + ", version " + d.getMatcher().getSpecification().getVersionRange())
                 .collect(Collectors.joining("\n"));
 
             System.out.println("You are missing the following dependencies!\n" + reqsStr);
+            System.exit(-1);
         }
 
         DependencyPrompter prompter = new DependencyPrompter(modPath, modJarFile, requirements);

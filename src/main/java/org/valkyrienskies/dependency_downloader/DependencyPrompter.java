@@ -97,7 +97,7 @@ public class DependencyPrompter {
 
     private Path getJarFile() {
         try {
-            return Paths.get(DependencyDownloader.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+            return Paths.get(DependencyDownloader.class.getProtectionDomain().getCodeSource().getLocation().toURI());
         } catch (Exception ignore) {}
 
         try (Stream<Path> jars = Files.list(modPath)) {
