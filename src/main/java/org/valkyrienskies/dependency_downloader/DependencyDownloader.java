@@ -56,6 +56,7 @@ public class DependencyDownloader {
 //        }
 
         JOptionPane.showMessageDialog(window, String.format("Download finished in %.1f seconds. Please manually restart the game.", time));
+        System.exit(0);
     }
 
     private void downloadDependency(DependencyToDownload toDownload) {
