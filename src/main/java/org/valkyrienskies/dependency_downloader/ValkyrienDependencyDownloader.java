@@ -9,23 +9,31 @@ import java.util.stream.Collectors;
 public class ValkyrienDependencyDownloader {
     public static final AtomicBoolean hasAlreadyRun = new AtomicBoolean(false);
 
-    public static void start(Path modPath) {
-        start(modPath, x -> true, null);
+    public static void start(Path modPath, boolean isDedicatedServer) {
+        start(modPath, x -> true, null, isDedicatedServer);
     }
 
-    public static void start(Path modPath, Path modJarFile) {
-        start(modPath, x -> true, modJarFile);
+    public static void start(Path modPath, Path modJarFile, boolean isDedicatedServer) {
+        start(modPath, x -> true, modJarFile, isDedicatedServer);
     }
 
-    public static void start(Path modPath, Predicate<ModDependency> shouldLoad) {
-        start(modPath, shouldLoad, null);
+    public static void start(Path modPath, Predicate<ModDependency> shouldLoad, boolean isDedicatedServer) {
+        start(modPath, shouldLoad, null, isDedicatedServer);
     }
 
-    public static void start(Path modPath, Predicate<ModDependency> shouldLoad, Path modJarFile) {
+    public static void start(Path modPath, Predicate<ModDependency> shouldLoad, Path modJarFile, boolean isDedicatedServer) {
         if (hasAlreadyRun.getAndSet(true)) return;
 
         List<ModDependency> requirements = DependencyAnalyzer.scanRequirements(modPath)
             .stream().filter(shouldLoad).collect(Collectors.toList());
+
+        if (isDedicatedServer) {
+            String reqsStr = requirements.stream()
+                .map(d -> d.getName() + ", version " + d.getMatcher().getSpecification().getVersionRange())
+                .collect(Collectors.joining("\n"));
+
+            System.out.println("You are missing the following dependencies!\n" + reqsStr);
+        }
 
         DependencyPrompter prompter = new DependencyPrompter(modPath, modJarFile, requirements);
         prompter.promptToDownload();

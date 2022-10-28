@@ -68,7 +68,8 @@ public class DependencyPrompter {
                 DependencyDownloader.DownloadData data = new DependencyDownloader.DownloadData(
                     modPath.toAbsolutePath().toString(),
                     window.getSelected(),
-                    Utils.guessRestartCommand().orElse(null)
+                    Utils.guessRestartCommand().orElse(null),
+                    System.getenv()
                 );
 
                 Path jarFile = Optional.ofNullable(modJarFile).orElseGet(this::getJarFile);

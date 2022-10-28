@@ -13,6 +13,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.*;
 import java.util.Collection;
+import java.util.Map;
 
 public class DependencyDownloader {
     private final DownloadData data;
@@ -44,7 +45,10 @@ public class DependencyDownloader {
 
         if (data.restartCommand != null) {
             try {
-                new ProcessBuilder(data.restartCommand.split(" ")).directory(null).start();
+                String[] envp = data.restartEnv.entrySet().stream()
+                    .map(e -> e.getKey() + "=" + e.getValue())
+                    .toArray(String[]::new);
+                Runtime.getRuntime().exec(data.restartCommand, envp);
                 JOptionPane.showMessageDialog(window, String.format("Download finished in %.1f seconds. We are restarting the game for you.", time));
                 return;
             } catch (IOException ignored) {}
@@ -87,11 +91,13 @@ public class DependencyDownloader {
         final String modPath;
         final Collection<DependencyToDownload> toDownload;
         final String restartCommand;
+        final Map<String, String> restartEnv;
 
-        public DownloadData(String modPath, Collection<DependencyToDownload> toDownload, String restartCommand) {
+        public DownloadData(String modPath, Collection<DependencyToDownload> toDownload, String restartCommand, Map<String, String> restartEnv) {
             this.modPath = modPath;
             this.toDownload = toDownload;
             this.restartCommand = restartCommand;
+            this.restartEnv = restartEnv;
         }
     }
 
