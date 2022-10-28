@@ -6,4 +6,6 @@ public interface DependencyMatcher {
 
     DependencyMatchResult matches(FileSystem zip);
 
+    ModSpecification getSpecification();
+
 }

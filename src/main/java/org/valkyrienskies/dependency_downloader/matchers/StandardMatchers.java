@@ -9,8 +9,20 @@ public class StandardMatchers {
     public static final String MAVEN_URL = "https://maven.valkyrienskies.org";
 
     public static void main(String[] args) {
-        System.out.println(Forge16.ARCHITECTURY_API.getDownloadUrl());
-        System.out.println(curseDownloadUrl("(modId)", "(projectId)", "(fileId)"));
+        System.out.println(Forge16.CLOTH_CONFIG.asJson());
+        System.out.println(Forge16.KOTLIN_FOR_FORGE.asJson());
+        System.out.println();
+        System.out.println(forgeValkyrienSkiesDependency(">=2.0.0", "2.0.0+2f3d531230").asJson());
+        System.out.println(Forge16.ARCHITECTURY_API.asJson());
+
+        System.out.println();
+        System.out.println(Fabric16.FABRIC_KOTLIN.asJson());
+        System.out.println(Fabric16.MOD_MENU.asJson());
+        System.out.println(Fabric16.CLOTH_CONFIG.asJson());
+
+        System.out.println();
+        System.out.println(fabricValkyrienSkiesDependency(">=2.0.0", "2.0.0+2f3d531230").asJson());
+        System.out.println(Fabric16.ARCHITECTURY_API.asJson());
     }
 
     public static ModDependency fabricValkyrienSkiesDependency(String versionRange, String latestVersion) {

@@ -37,4 +37,9 @@ public class ForgeDependencyMatcher implements DependencyMatcher {
 
         return DependencyMatchResult.PASS;
     }
+
+    @Override
+    public ModSpecification getSpecification() {
+        return specification;
+    }
 }

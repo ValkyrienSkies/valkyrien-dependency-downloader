@@ -1,6 +1,8 @@
 package org.valkyrienskies.dependency_downloader;
 
+import com.google.gson.JsonObject;
 import org.valkyrienskies.dependency_downloader.matchers.DependencyMatcher;
+import org.valkyrienskies.dependency_downloader.matchers.FabricDependencyMatcher;
 
 import java.util.Objects;
 
@@ -30,6 +32,19 @@ public class ModDependency {
         return optional;
     }
 
+    public String asJson() {
+        String loader = "forge";
+        if (getMatcher() instanceof FabricDependencyMatcher) loader = "fabric";
+
+        JsonObject json = new JsonObject();
+        json.addProperty("loader", loader);
+        json.addProperty("name", getName());
+        json.addProperty("modId", getMatcher().getSpecification().getModId());
+        json.addProperty("versionRange", getMatcher().getSpecification().getVersionRange());
+        json.addProperty("optional", isOptional());
+        json.addProperty("downloadUrl", getDownloadUrl());
+        return json.toString();
+    }
 
     @Override
     public boolean equals(Object o) {

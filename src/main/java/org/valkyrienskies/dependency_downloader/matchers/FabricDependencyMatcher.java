@@ -34,4 +34,9 @@ public class FabricDependencyMatcher implements DependencyMatcher {
 
         return DependencyMatchResult.PASS;
     }
+
+    @Override
+    public ModSpecification getSpecification() {
+        return specification;
+    }
 }
