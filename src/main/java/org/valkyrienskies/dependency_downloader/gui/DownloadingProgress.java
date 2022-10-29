@@ -26,7 +26,7 @@ public class DownloadingProgress extends JFrame {
         cancelButton = new JButton();
 
         //======== this ========
-        var contentPane = getContentPane();
+        Container contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
 
         //======== panel1 ========

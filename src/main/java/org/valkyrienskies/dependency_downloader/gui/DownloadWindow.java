@@ -139,7 +139,7 @@ public class DownloadWindow extends JFrame {
                 thisWindowClosing(e);
             }
         });
-        var contentPane = getContentPane();
+        Container contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
 
         //======== panel1 ========
