@@ -56,11 +56,24 @@ public class DependencyAnalyzer {
                 String loader = dep.get("loader").getAsString();
                 String downloadUrl = dep.get("downloadUrl").getAsString();
                 String name = dep.get("name").getAsString();
-                String versionRange = dep.get("versionRange").getAsString();
                 String modId = dep.get("modId").getAsString();
                 boolean optional = dep.has("optional") && dep.get("optional").getAsBoolean();
 
-                ModSpecification spec = new ModSpecification(modId, versionRange);
+                ModSpecification spec;
+
+                if (dep.has("versionRange")) {
+                    String versionRange = dep.get("versionRange").getAsString();
+                    spec = new ModSpecification(modId, versionRange);
+                } else if (dep.has("minVersion") || dep.has("maxVersion")) {
+                    JsonElement minVersion = dep.get("minVersion");
+                    JsonElement maxVersion = dep.get("maxVersion");
+                    spec = new ModSpecification(modId,
+                        minVersion == null ? null : minVersion.getAsString(),
+                        maxVersion == null ? null : maxVersion.getAsString());
+                } else {
+                    spec = new ModSpecification(modId);
+                }
+
                 if ("fabric".equals(loader)) {
                     dependencies.add(new ModDependency(new FabricDependencyMatcher(spec), downloadUrl, optional, name));
                 } else if ("forge".equals(loader)) {

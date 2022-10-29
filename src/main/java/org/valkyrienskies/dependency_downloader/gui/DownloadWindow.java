@@ -139,7 +139,7 @@ public class DownloadWindow extends JFrame {
                 thisWindowClosing(e);
             }
         });
-        Container contentPane = getContentPane();
+        var contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
 
         //======== panel1 ========
@@ -172,7 +172,7 @@ public class DownloadWindow extends JFrame {
 
             //---- downloadButton ----
             downloadButton.setText("Download");
-            downloadButton.setBackground(new Color(54, 159, 214));
+            downloadButton.setBackground(new Color(0x369fd6));
             downloadButton.setForeground(Color.white);
             downloadButton.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
             downloadButton.addActionListener(e -> onDownload(e));
