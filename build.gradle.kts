@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "org.valkyrienskies"
-version = "4.0"
+version = "4.1"
 
 repositories {
     mavenCentral()

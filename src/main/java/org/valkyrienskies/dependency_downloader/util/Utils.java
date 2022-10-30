@@ -85,10 +85,21 @@ public class Utils {
             return getJVMPathWindows();
         }
 
-        String javaHome = System.getProperty("java.home");
+        String javaHome = guessJavaCommandFromJavaHome();
         if (javaHome != null) return javaHome;
 
         throw new RuntimeException("Could not figure out the java command!");
+    }
+
+    public static String guessJavaCommandFromJavaHome() {
+        String javaHome = System.getProperty("java.home");
+        if (javaHome == null) return null;
+
+        if (isWindows()) {
+            return javaHome + "\\bin\\java.exe";
+        } else {
+            return javaHome + "/bin/java";
+        }
     }
 
 
