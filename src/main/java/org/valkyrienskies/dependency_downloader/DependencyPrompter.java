@@ -11,6 +11,7 @@ import java.nio.file.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class DependencyPrompter {
@@ -30,12 +31,25 @@ public class DependencyPrompter {
     }
 
 
-    public void promptToDownload() {
+    public void promptToDownload(boolean isDedicatedServer) {
         if (Files.exists(skipMarkerPath)) return;
 
         toDownload = DependencyAnalyzer.checkDependencies(modPath, dependencies);
 
+        if (isDedicatedServer) {
+            if (!toDownload.stream().allMatch(DependencyToDownload::isOptional)) {
+                String reqsStr = toDownload.stream()
+                    .map(d -> d.getName() + ", version " + d.getVersionRange() + ", download: " + d.getDownloadUrl())
+                    .collect(Collectors.joining("\n"));
+
+                System.out.println("You are missing the following dependencies!\n" + reqsStr);
+                System.exit(-1);
+            }
+            return;
+        }
+
         if (!toDownload.isEmpty()) {
+            System.setProperty("java.awt.headless", "false");
             createDownloadWindow();
         }
     }

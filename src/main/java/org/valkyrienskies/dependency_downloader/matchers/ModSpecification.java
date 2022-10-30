@@ -13,6 +13,12 @@ public class ModSpecification {
     private final String versionRangeStr;
     private final String modId;
 
+    public ModSpecification(Expression versionRange, String versionRangeStr, String modId) {
+        this.versionRange = versionRange;
+        this.versionRangeStr = versionRangeStr;
+        this.modId = modId;
+    }
+
     public ModSpecification(String modId) {
         this.modId = modId;
         this.versionRange = gte(Version.forIntegers(0, 0, 0));
@@ -57,6 +63,10 @@ public class ModSpecification {
 
     public String getVersionRange() {
         return this.versionRangeStr;
+    }
+
+    public Expression getVersionExpression() {
+        return this.versionRange;
     }
 
     public boolean isCorrectVersion(String version) {

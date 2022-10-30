@@ -1,8 +1,13 @@
 package org.valkyrienskies.dependency_downloader;
 
+import com.github.zafarkhaja.semver.Version;
+import com.github.zafarkhaja.semver.expr.CompositeExpression;
+import com.github.zafarkhaja.semver.expr.Expression;
 import com.google.gson.JsonObject;
 import org.valkyrienskies.dependency_downloader.matchers.DependencyMatcher;
 import org.valkyrienskies.dependency_downloader.matchers.FabricDependencyMatcher;
+import org.valkyrienskies.dependency_downloader.matchers.ForgeDependencyMatcher;
+import org.valkyrienskies.dependency_downloader.matchers.ModSpecification;
 
 import java.util.Objects;
 
@@ -13,11 +18,59 @@ public class ModDependency {
 
     private final String name;
 
+    private final Version versionFor;
+
+
     public ModDependency(DependencyMatcher matcher, String downloadUrl, boolean optional, String name) {
         this.matcher = matcher;
         this.downloadUrl = downloadUrl;
         this.optional = optional;
         this.name = name;
+        this.versionFor = Version.forIntegers(0);
+    }
+
+    public ModDependency(DependencyMatcher matcher, String downloadUrl, boolean optional, String name, Version versionFor) {
+        this.matcher = matcher;
+        this.downloadUrl = downloadUrl;
+        this.optional = optional;
+        this.name = name;
+        this.versionFor = versionFor;
+    }
+
+    public ModDependency merge(ModDependency other) {
+        ModSpecification otherSpec = other.getMatcher().getSpecification();
+        ModSpecification thisSpec = this.getMatcher().getSpecification();
+
+        String modId = thisSpec.getModId();
+
+        if (!otherSpec.getModId().equals(modId)) {
+            throw new IllegalArgumentException("Tried to merge mods " + modId + " and " + otherSpec.getModId() + " with different mod IDs");
+        }
+
+        Expression combinedVersionRange = new CompositeExpression(otherSpec.getVersionExpression())
+            .and(thisSpec.getVersionExpression());
+
+        String combinedVersionRangeStr = thisSpec.getVersionRange().equals(otherSpec.getVersionRange())
+            ? thisSpec.getVersionRange()
+            : "(" + otherSpec.getVersionRange() + ") & (" + thisSpec.getVersionRange() + ")";
+
+        String newDownloadUrl = getDownloadUrl();
+        Version versionFor = this.versionFor;
+        if (other.versionFor.greaterThan(this.versionFor)) {
+            newDownloadUrl = other.getDownloadUrl();
+            versionFor = other.versionFor;
+        }
+
+        ModSpecification newSpec = new ModSpecification(combinedVersionRange, combinedVersionRangeStr, modId);
+        DependencyMatcher newMatcher;
+
+        if (getMatcher() instanceof ForgeDependencyMatcher) {
+            newMatcher = new ForgeDependencyMatcher(newSpec);
+        } else {
+            newMatcher = new FabricDependencyMatcher(newSpec);
+        }
+
+        return new ModDependency(newMatcher, newDownloadUrl, other.optional && this.optional, getName(), versionFor);
     }
 
     public DependencyMatcher getMatcher() {

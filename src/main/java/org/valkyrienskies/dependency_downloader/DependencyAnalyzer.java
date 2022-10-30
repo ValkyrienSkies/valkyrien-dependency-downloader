@@ -1,5 +1,6 @@
 package org.valkyrienskies.dependency_downloader;
 
+import com.github.zafarkhaja.semver.Version;
 import com.google.gson.*;
 import org.valkyrienskies.dependency_downloader.matchers.DependencyMatchResult;
 import org.valkyrienskies.dependency_downloader.matchers.FabricDependencyMatcher;
@@ -22,7 +23,7 @@ public class DependencyAnalyzer {
 
 
     public static List<ModDependency> scanRequirements(Path modPath) {
-        final List<ModDependency> requirements = new ArrayList<>();
+        final Map<String, ModDependency> requirements = new HashMap<>();
 
         try (Stream<Path> jars = Files.list(modPath)) {
             jars.filter(jar -> jar.getFileName().toString().endsWith(".jar")).forEach(jar -> {
@@ -30,7 +31,10 @@ public class DependencyAnalyzer {
                     Path manifest = zipfs.getPath("valkyrien_dependency_manifest.json");
                     if (Files.exists(manifest)) {
                         try {
-                            requirements.addAll(parseManifest(new String(Files.readAllBytes(manifest))));
+                            for (ModDependency newReq : parseManifest(new String(Files.readAllBytes(manifest)))) {
+                                requirements.compute(newReq.getMatcher().getSpecification().getModId(),
+                                    (k, req) -> req == null ? newReq : newReq.merge(req));
+                            }
                         } catch (Exception e) {
                             System.out.println("VS: Failed to parse dependency manifest for " + jar);
                             e.printStackTrace();
@@ -44,7 +48,7 @@ public class DependencyAnalyzer {
             throw new UncheckedIOException(e);
         }
 
-        return requirements;
+        return new ArrayList<>(requirements.values());
     }
 
     public static List<ModDependency> parseManifest(String manifestJson) {
@@ -59,6 +63,7 @@ public class DependencyAnalyzer {
                 String modId = dep.get("modId").getAsString();
                 boolean optional = dep.has("optional") && dep.get("optional").getAsBoolean();
 
+                String downloadUrlVersion = null;
                 ModSpecification spec;
 
                 if (dep.has("versionRange")) {
@@ -67,17 +72,28 @@ public class DependencyAnalyzer {
                 } else if (dep.has("minVersion") || dep.has("maxVersion")) {
                     JsonElement minVersion = dep.get("minVersion");
                     JsonElement maxVersion = dep.get("maxVersion");
-                    spec = new ModSpecification(modId,
-                        minVersion == null ? null : minVersion.getAsString(),
-                        maxVersion == null ? null : maxVersion.getAsString());
+                    String minVersionStr = minVersion == null ? null : minVersion.getAsString();
+                    String maxVersionStr = maxVersion == null ? null : maxVersion.getAsString();
+                    downloadUrlVersion = minVersionStr;
+                    spec = new ModSpecification(modId,minVersionStr, maxVersionStr);
                 } else {
                     spec = new ModSpecification(modId);
                 }
 
+                if (dep.has("downloadUrlVersion")) {
+                    downloadUrlVersion = dep.get("downloadUrlVersion").getAsString();
+                }
+
+                Version downloadUrlVersionParsed = downloadUrlVersion == null
+                    ? Version.forIntegers(0)
+                    : Version.valueOf(downloadUrlVersion);
+
                 if ("fabric".equals(loader)) {
-                    dependencies.add(new ModDependency(new FabricDependencyMatcher(spec), downloadUrl, optional, name));
+                    dependencies.add(new ModDependency(
+                        new FabricDependencyMatcher(spec), downloadUrl, optional, name, downloadUrlVersionParsed));
                 } else if ("forge".equals(loader)) {
-                    dependencies.add(new ModDependency(new ForgeDependencyMatcher(spec), downloadUrl, optional, name));
+                    dependencies.add(new ModDependency(
+                        new ForgeDependencyMatcher(spec), downloadUrl, optional, name, downloadUrlVersionParsed));
                 } else {
                     System.out.println("VS: Unrecognized manifest loader: " + loader);
                 }

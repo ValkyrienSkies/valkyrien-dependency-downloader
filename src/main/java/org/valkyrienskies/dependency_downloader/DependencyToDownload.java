@@ -2,7 +2,6 @@ package org.valkyrienskies.dependency_downloader;
 
 
 import java.io.Serializable;
-import java.nio.file.Path;
 import java.util.Optional;
 
 public class DependencyToDownload implements Comparable<DependencyToDownload>, Serializable {
@@ -12,11 +11,18 @@ public class DependencyToDownload implements Comparable<DependencyToDownload>, S
     private final String name;
     private final String toReplace;
 
+    public String getVersionRange() {
+        return versionRange;
+    }
+
+    private final String versionRange;
+
     public DependencyToDownload(ModDependency dependency, String toReplace) {
         this.downloadUrl = dependency.getDownloadUrl();
         this.optional = dependency.isOptional();
         this.name = dependency.getName();
         this.toReplace = toReplace;
+        this.versionRange = dependency.getMatcher().getSpecification().getVersionRange();
     }
 
     public String getDownloadUrl() {

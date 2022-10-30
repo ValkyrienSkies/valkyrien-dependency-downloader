@@ -32,16 +32,7 @@ public class ValkyrienDependencyDownloader {
         List<ModDependency> requirements = DependencyAnalyzer.scanRequirements(modPath)
             .stream().filter(shouldLoad).collect(Collectors.toList());
 
-        if (isDedicatedServer && !requirements.stream().allMatch(ModDependency::isOptional)) {
-            String reqsStr = requirements.stream()
-                .map(d -> d.getName() + ", version " + d.getMatcher().getSpecification().getVersionRange())
-                .collect(Collectors.joining("\n"));
-
-            System.out.println("You are missing the following dependencies!\n" + reqsStr);
-            System.exit(-1);
-        }
-
         DependencyPrompter prompter = new DependencyPrompter(modPath, modJarFile, requirements);
-        prompter.promptToDownload();
+        prompter.promptToDownload(isDedicatedServer);
     }
 }
