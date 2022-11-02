@@ -19,9 +19,8 @@ public class DependencyPrompter {
     private final Path modPath;
     private final Path modJarFile;
     private final Path skipMarkerPath;
-    private Set<DependencyToDownload> toDownload;
-
     private final List<ModDependency> dependencies;
+    private Set<DependencyToDownload> toDownload;
 
     public DependencyPrompter(Path modPath, Path modJarFile, List<ModDependency> dependencies) {
         this.modPath = modPath;
@@ -87,11 +86,13 @@ public class DependencyPrompter {
                 );
 
                 Path jarFile = Optional.ofNullable(modJarFile).orElseGet(this::getJarFile);
+                Path tempFile = Files.createTempDirectory("vs_updater").resolve("vs_updater.jar");
+                Files.copy(jarFile, tempFile);
 
                 Process process = new ProcessBuilder(
                     Utils.guessJavaCommand(),
                     "-cp",
-                    jarFile.toAbsolutePath().toString(),
+                    tempFile.toAbsolutePath().toString(),
                     "org.valkyrienskies.dependency_downloader.DependencyDownloader"
                 ).directory(null).start();
 

@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.io.UncheckedIOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.channels.Channels;
@@ -24,8 +25,9 @@ public class DependencyDownloader {
     }
 
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
         DownloadData data = (DownloadData) new ObjectInputStream(System.in).readObject();
+        Thread.sleep(500); // give the game some time to shut down or something idk
         new DependencyDownloader(data).start();
     }
 
@@ -75,7 +77,8 @@ public class DependencyDownloader {
                     Files.createDirectories(backupPath);
                     Files.move(p, backupPath.resolve(p.getFileName()), StandardCopyOption.REPLACE_EXISTING);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    JOptionPane.showMessageDialog(null, e.getMessage());
+                    throw new UncheckedIOException(e);
                 }
             });
 
@@ -83,7 +86,7 @@ public class DependencyDownloader {
             try (FileChannel targetChannel = FileChannel.open(targetPath, StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
                 targetChannel.transferFrom(urlChannel, 0, Long.MAX_VALUE);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(window, "Failed to download " + toDownload.getName() + ": " + e.getMessage());
             e.printStackTrace();
         }
