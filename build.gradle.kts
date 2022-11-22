@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "org.valkyrienskies"
-version = "4.2"
+version = "4.3"
 
 repositories {
     mavenCentral()
@@ -40,6 +40,7 @@ dependencies {
 }
 
 tasks.named<ShadowJar>("shadowJar") {
+    relocate("com.github.zafarkhaja", "org.valkyrienskies.dependency_downloader.relocate.com.github.zafarkhaja")
     configurations = listOf(shade)
     minimize()
 }
