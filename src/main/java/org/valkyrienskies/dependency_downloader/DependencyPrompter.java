@@ -3,7 +3,6 @@ package org.valkyrienskies.dependency_downloader;
 import org.valkyrienskies.dependency_downloader.gui.DownloadWindow;
 import org.valkyrienskies.dependency_downloader.util.Utils;
 
-import javax.annotation.Nullable;
 import javax.swing.*;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -80,9 +79,7 @@ public class DependencyPrompter {
             try {
                 DependencyDownloader.DownloadData data = new DependencyDownloader.DownloadData(
                     modPath.toAbsolutePath().toString(),
-                    window.getSelected(),
-                    Utils.guessRestartCommand().orElse(null),
-                    System.getenv()
+                    window.getSelected()
                 );
 
                 Path jarFile = Optional.ofNullable(modJarFile).orElseGet(this::getJarFile);
