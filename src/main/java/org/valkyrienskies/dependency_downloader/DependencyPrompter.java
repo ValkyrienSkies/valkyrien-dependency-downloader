@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.nio.file.*;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -20,6 +21,8 @@ public class DependencyPrompter {
     private final Path skipMarkerPath;
     private final List<ModDependency> dependencies;
     private Set<DependencyToDownload> toDownload;
+
+    private static final String CLASS_TO_LAUNCH = "org.valkyrienskies.dependency_downloader.DependencyDownloader";
 
     public DependencyPrompter(Path modPath, Path modJarFile, List<ModDependency> dependencies) {
         this.modPath = modPath;
@@ -83,14 +86,16 @@ public class DependencyPrompter {
                 );
 
                 Path jarFile = Optional.ofNullable(modJarFile).orElseGet(this::getJarFile);
-                Path tempFile = Files.createTempDirectory("vs_updater").resolve("vs_updater.jar");
-                Files.copy(jarFile, tempFile);
+                if (!Files.isDirectory(jarFile)) {
+                    Path tempFile = Files.createTempDirectory("vs_updater").resolve("vs_updater.jar");
+                    Files.copy(jarFile, tempFile);
+                }
 
                 Process process = new ProcessBuilder(
                     Utils.guessJavaCommand(),
                     "-cp",
-                    tempFile.toAbsolutePath().toString(),
-                    "org.valkyrienskies.dependency_downloader.DependencyDownloader"
+                    jarFile.toAbsolutePath().toString(),
+                    CLASS_TO_LAUNCH
                 ).directory(null).start();
 
                 ObjectOutputStream oos = new ObjectOutputStream(process.getOutputStream());
@@ -116,7 +121,13 @@ public class DependencyPrompter {
             return jars.filter(jar -> jar.getFileName().toString().endsWith(".jar"))
                 .filter(jar -> {
                     try (FileSystem zipfs = FileSystems.newFileSystem(jar, (ClassLoader) null)) {
-                        zipfs.getPath("org", "valkyrienskies", "dependency_downloader", "DependencyDownloader.class");
+                        // basically janky way of doing the following but compatible with relocation:
+                        // zipfs.getPath("org", "valkyrienskies", "dependency_downloader", "DependencyDownloader.class")
+
+                        String[] path = CLASS_TO_LAUNCH.split("\\.");
+                        path[path.length - 1] += ".class";
+                        zipfs.getPath(path[0], Arrays.copyOfRange(path, 1, path.length));
+
                         return true;
                     } catch (IOException e) {
                         return false;

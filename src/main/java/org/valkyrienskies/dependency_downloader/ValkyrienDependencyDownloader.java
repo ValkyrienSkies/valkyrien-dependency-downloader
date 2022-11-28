@@ -11,7 +11,7 @@ public class ValkyrienDependencyDownloader {
     public static final AtomicBoolean hasAlreadyRun = new AtomicBoolean(false);
 
     public static void main(String[] args) {
-        start(Paths.get("mods"), true);
+        start(Paths.get("mods"), false);
     }
 
     public static void start(Path modPath, boolean isDedicatedServer) {
