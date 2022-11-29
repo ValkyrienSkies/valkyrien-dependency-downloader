@@ -4,6 +4,7 @@ import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import com.electronwill.nightconfig.core.file.FileConfig;
 
 import java.nio.file.FileSystem;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -17,6 +18,10 @@ public class ForgeDependencyMatcher implements DependencyMatcher {
     @Override
     public DependencyMatchResult matches(FileSystem zip) {
         Path modsToml = zip.getPath("META-INF", "mods.toml");
+        if (Files.notExists(modsToml)) {
+            return DependencyMatchResult.PASS;
+        }
+
         try (FileConfig config = FileConfig.of(modsToml)) {
             config.load();
 
