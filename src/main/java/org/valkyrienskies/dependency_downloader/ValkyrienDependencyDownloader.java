@@ -1,5 +1,7 @@
 package org.valkyrienskies.dependency_downloader;
 
+import org.valkyrienskies.dependency_downloader.util.Utils;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -28,6 +30,8 @@ public class ValkyrienDependencyDownloader {
 
     public static void start(Path modPath, Predicate<ModDependency> shouldLoad, Path modJarFile, boolean isDedicatedServer) {
         if (hasAlreadyRun.getAndSet(true)) return;
+
+        isDedicatedServer |= Utils.isMac();
 
         List<ModDependency> requirements = DependencyAnalyzer.scanRequirements(modPath)
             .stream().filter(shouldLoad).collect(Collectors.toList());

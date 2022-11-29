@@ -178,8 +178,12 @@ public class Utils {
 
     }
 
-    private static boolean isWindows() {
+    public static boolean isWindows() {
         return System.getProperty("os.name").contains("Windows");
+    }
+
+    public static boolean isMac() {
+        return System.getProperty("os.name").contains("Mac OS");
     }
 
     // https://www.rgagnon.com/javadetails/java-get-running-jvm-path.html
