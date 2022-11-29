@@ -62,13 +62,7 @@ public class ModDependency {
         }
 
         ModSpecification newSpec = new ModSpecification(combinedVersionRange, combinedVersionRangeStr, modId);
-        DependencyMatcher newMatcher;
-
-        if (getMatcher() instanceof ForgeDependencyMatcher) {
-            newMatcher = new ForgeDependencyMatcher(newSpec);
-        } else {
-            newMatcher = new FabricDependencyMatcher(newSpec);
-        }
+        DependencyMatcher newMatcher = getMatcher().getFactory().create(newSpec);
 
         return new ModDependency(newMatcher, newDownloadUrl, other.optional && this.optional, getName(), versionFor);
     }

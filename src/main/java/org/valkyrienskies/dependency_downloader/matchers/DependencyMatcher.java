@@ -8,4 +8,6 @@ public interface DependencyMatcher {
 
     ModSpecification getSpecification();
 
+    DependencyMatcherFactory getFactory();
+
 }

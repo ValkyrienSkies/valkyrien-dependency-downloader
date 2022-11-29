@@ -21,22 +21,19 @@ public class FabricDependencyMatcher implements DependencyMatcher {
             JsonObject obj = new JsonParser().parse(fabricJson).getAsJsonObject();
             String id = obj.get("id").getAsString();
             String version = obj.get("version").getAsString();
-            if (specification.isCorrectMod(id)) {
-                if (specification.isCorrectVersion(version)) {
-                    return DependencyMatchResult.FULFILLED;
-                } else {
-                    return DependencyMatchResult.REPLACE;
-                }
-            }
+            return specification.getMatchResult(id, version);
         } catch (Exception e) {
             return DependencyMatchResult.PASS;
         }
-
-        return DependencyMatchResult.PASS;
     }
 
     @Override
     public ModSpecification getSpecification() {
         return specification;
+    }
+
+    @Override
+    public DependencyMatcherFactory getFactory() {
+        return FabricDependencyMatcher::new;
     }
 }

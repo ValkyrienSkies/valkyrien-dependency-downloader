@@ -44,4 +44,9 @@ public class ForgeDependencyMatcher implements DependencyMatcher {
     public ModSpecification getSpecification() {
         return specification;
     }
+
+    @Override
+    public DependencyMatcherFactory getFactory() {
+        return ForgeDependencyMatcher::new;
+    }
 }

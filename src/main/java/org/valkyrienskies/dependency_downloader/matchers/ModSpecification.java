@@ -53,6 +53,17 @@ public class ModSpecification {
         this.versionRange = expr;
     }
 
+    public DependencyMatchResult getMatchResult(String id, String version) {
+        if (isCorrectMod(id)) {
+            if (isCorrectVersion(version)) {
+                return DependencyMatchResult.FULFILLED;
+            } else {
+                return DependencyMatchResult.REPLACE;
+            }
+        }
+        return DependencyMatchResult.PASS;
+    }
+
     public boolean isCorrectMod(String modId) {
         return this.modId.equals(modId);
     }

@@ -2,10 +2,7 @@ package org.valkyrienskies.dependency_downloader;
 
 import com.github.zafarkhaja.semver.Version;
 import com.google.gson.*;
-import org.valkyrienskies.dependency_downloader.matchers.DependencyMatchResult;
-import org.valkyrienskies.dependency_downloader.matchers.FabricDependencyMatcher;
-import org.valkyrienskies.dependency_downloader.matchers.ForgeDependencyMatcher;
-import org.valkyrienskies.dependency_downloader.matchers.ModSpecification;
+import org.valkyrienskies.dependency_downloader.matchers.*;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -88,15 +85,9 @@ public class DependencyAnalyzer {
                     ? Version.forIntegers(0)
                     : Version.valueOf(downloadUrlVersion);
 
-                if ("fabric".equals(loader)) {
-                    dependencies.add(new ModDependency(
-                        new FabricDependencyMatcher(spec), downloadUrl, optional, name, downloadUrlVersionParsed));
-                } else if ("forge".equals(loader)) {
-                    dependencies.add(new ModDependency(
-                        new ForgeDependencyMatcher(spec), downloadUrl, optional, name, downloadUrlVersionParsed));
-                } else {
-                    System.out.println("VS: Unrecognized manifest loader: " + loader);
-                }
+                DependencyMatcherFactory matcherFactory = DependencyMatcherFactory.getMatcher(loader);
+                dependencies.add(new ModDependency(matcherFactory.create(spec), downloadUrl,
+                    optional, name, downloadUrlVersionParsed));
             } catch (Exception ex) {
                 System.out.println("VS: Malformed dependency manifest entry " + e);
                 ex.printStackTrace();
